@@ -14,8 +14,18 @@ class alunoTest(unittest.TestCase):
     self.turma.cadastrarAlunos([self.aluno]);
     self.conexao = ConexaoClass.conexaoMongoDB(self, url = 'localhost.com', banco = 'faculdade')
 
-  def test_salvarAluno(self):   
-    print('Escreva o seu método aqui...')
+  def test_salvarAluno(self):
+    resposta = self.aluno.salvar(conexao=self.conexao, colecao='alunos')
+    
+    colecao_mock = self.conexao['alunos']
+    aluno_inserido = colecao_mock.find_one({'primeiro_nome': 'Fabio', 'sobrenome': 'Teixeira', 'nota': 10})
+    
+    self.assertIsNotNone(aluno_inserido, 'O aluno não foi salvo no banco de dados')
+    self.assertEqual(aluno_inserido['primeiro_nome'], 'Fabio', 'O primeiro nome do aluno não foi salvo')
+    self.assertEqual(aluno_inserido['sobrenome'], 'Teixeira', 'O sobrenome do aluno não foi salvo')
+    self.assertEqual(aluno_inserido['nota'], 10, 'A nota do aluno não foi salva')
+    self.assertEqual(resposta, True, 'O método salvar não retornou o valor esperado!')
+
 
   def test_salvarTurma(self):   
     resposta = self.turma.salvar(conexao = self.conexao, colecao = 'turma');  
